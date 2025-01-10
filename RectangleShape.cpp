@@ -13,6 +13,7 @@ RectangleShape::RectangleShape()
 	isDragging = false;
 	center.x = Rect.right - Rect.left;
 	center.y = Rect.bottom - Rect.top;
+	borderWidth = 1;
 
 	draw();
 }
@@ -31,9 +32,29 @@ RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COL
 		hdc = sHdc;
 		width = Rect.right - Rect.left;
 		height = Rect.bottom - Rect.top;
+		borderWidth = 1;
 
 		draw();
 	}
+
+RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable, HDC sHdc, int nBorderWidth)
+{
+	Rect.left = sLeft;
+	Rect.top = sTop;
+	Rect.right = sRight;
+	Rect.bottom = sBottom;
+	fill = sFill;
+	filled = sFilled;
+	border = sBorder;
+	draggable = sDraggable;
+	isDragging = false;
+	hdc = sHdc;
+	width = Rect.right - Rect.left;
+	height = Rect.bottom - Rect.top;
+	borderWidth = nBorderWidth;
+
+	draw();
+}
 
 void RectangleShape:: setPosition(int newLeft, int newTop, int newRight, int newBottom)
 	{
@@ -64,15 +85,6 @@ void RectangleShape:: setFilled(bool value)
 
 bool RectangleShape:: isIn(POINT check)
 {
-	if (check.y > Rect.left && check.y < Rect.right)
-	{
-		std::cout << "\nMouse is in X\n";
-	}
-	if (check.x > Rect.top && check.x < Rect.bottom)
-	{
-		std::cout << "\nMouse is in Y\n";
-	}
-
 	if ((check.x > Rect.left && check.x < Rect.right) && (check.y > Rect.top && check.y < Rect.bottom))
 	{
 		return true;
@@ -85,7 +97,9 @@ bool RectangleShape:: isIn(POINT check)
 
 void RectangleShape:: draw()
 	{	
-		HPEN Pen = CreatePen(PS_SOLID, 1, border);
+		SetBkMode(hdc, TRANSPARENT);
+
+		HPEN Pen = CreatePen(PS_SOLID, borderWidth, border);
 		SelectObject(hdc, Pen);
 
 		HBRUSH Brush = nullptr;
@@ -95,17 +109,13 @@ void RectangleShape:: draw()
 			SelectObject(hdc, Brush);
 		}
 
-		Rectangle(hdc, Rect.top, Rect.left, Rect.bottom, Rect.right);
+		Rectangle(hdc, Rect.left, Rect.top, Rect.right, Rect.bottom);
 
 		if (Brush)
 		{
 			DeleteObject(Brush);
 		}
 		DeleteObject(Pen);
-		
-		//std::cout << "\nRectangle coords TOP:"<< Rect.top<<", LEFT:"<<Rect.left<<", BOTTOM:"<<Rect.bottom<<", RIGHT:"<<Rect.right<<"\n";
-		//std::cout << "Rectangle width:" << width << " Rectangle Height:" << height << "\n";
-		//std::cout << "Rectangle center:" << center.x << "," << center.y<<"\n";
 		return;
 	}
 

@@ -13,12 +13,16 @@ protected:
     int width;
     int height;
     POINT center;
+    int borderWidth;
 
 public:
     // Constructors
     RectangleShape(int sLeft, int sTop, int sRight, int sBottom,
         COLORREF sBorder, COLORREF sFill, bool sFilled,
         bool draggable, HDC hdc);
+    RectangleShape(int sLeft, int sTop, int sRight, int sBottom,
+        COLORREF sBorder, COLORREF sFill, bool sFilled,
+        bool draggable, HDC hdc, int borderWidth);
     RectangleShape();
 
     // Setters

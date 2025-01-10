@@ -23,6 +23,9 @@ HICON gearIcon = (HICON)LoadImage(NULL, L"Gear.ico", IMAGE_ICON, 32, 32, LR_LOAD
 std::vector<Button*> buttons;
 std::vector<Button*> settingsButtons;
 std::vector<RectangleShape*> rectangles;
+std::vector<RectangleShape*> playingBoard;
+
+RectangleShape* gettingDragged = NULL;
 
 bool leftButtonPressed = false;
 bool rightButtonPressed = false;
@@ -47,6 +50,7 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
 void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE textSize);
 void clearButtons();
 void clearSettingsButtons();
+void clearRectangles();
 
 // Window procedure for the settings subscreen
 LRESULT CALLBACK SubWindowProc(HWND hwndSubscreen, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -211,6 +215,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 {   
                     button->doFunction();
                     InvalidateRect(hwnd, NULL, FALSE);
+                    break;
                 }
             }
 
@@ -218,18 +223,14 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             {
                 RECT rect;
                 rect = rectangle->getRect();
-                std::cout << "\nMouse is in Location:" << mousePosition.x << "," << mousePosition.y;
-                std::cout << "\nRectangle Points: \tLeft:" << rect.left << "\tTop" << rect.top << "\tRight" << rect.right << "\tBottom" << rect.bottom;
-                std::cout << "\nChecking if Mouse is in Rectangle";
                 if (rectangle->isIn(mousePosition))
                 {
-                    std::cout << "\nMouse is in Rectangle";
-                    std::cout << "\nIs Rectangle Draggable: " << rectangle->getDraggable();
                     if (rectangle->getDraggable())
                     {
                         rectangle->setIsDragging(true);
+                        gettingDragged = rectangle;
+                        break;
                     }
-                    std::cout << "\nIs Rectangle dragging: " << rectangle->getIsDragging();
                 }
             }
             return 0;
@@ -243,9 +244,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
         case WM_LBUTTONUP:  // Left mouse button up
         {
-            for (RectangleShape* rectangle : rectangles)
+            if (gettingDragged != NULL)
             {
-                rectangle->setIsDragging(false);
+                gettingDragged->setIsDragging(false);
+                gettingDragged = NULL;
             }
             leftButtonPressed = false;
             return 0;
@@ -265,15 +267,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 ScreenToClient(hwnd, &screenPos);
                 mousePosition = screenPos;
             }
-        
-            for (RectangleShape* rectangle : rectangles)
+            if (gettingDragged != NULL)
             {
-                if (rectangle->getIsDragging())
-                {
-                    rectangle->setPositionByCenter(mousePosition);
-                }
-                //std::cout << "\n Rectangle Draggable:" <<rectangle->getDraggable();
-                //std::cout << "\n Rectangle Dragging: " << rectangle->getIsDragging();
+                gettingDragged->setPositionByCenter(mousePosition);
             }
         }
 
@@ -318,8 +314,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     }
                         int x;
                         int y;
-
-                        DrawIcon(hdcMem, clientWidth - 60, 10, gearIcon);
 
                         // Set the text to display
                         const wchar_t* menuText = L"Generic Puzzle Game!";
@@ -422,7 +416,8 @@ void invalidateButton(HWND hwnd, HWND hwndButton)
 void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE textSize)
 {
     clearButtons();
-    
+    clearRectangles();
+
     int x;
     int y;
     // Set the text to display
@@ -448,8 +443,25 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
     TextOut(hdc, x, y, gameText, wcslen(gameText));
 
     RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,255,255),false,true,hdc);
+    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
+    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
+    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
     
+    RectangleShape* firstBoardSquare = new RectangleShape(1000, 1000, 1100, 1100, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc,5);
+    RectangleShape* secondBoardSquare = new RectangleShape(1100, 1000, 1200, 1100, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
+    RectangleShape* thirdBoardSquare = new RectangleShape(1000, 1100, 1100, 1200, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
+    RectangleShape* fourthBoardSquare = new RectangleShape(1100, 1100, 1200, 1200, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
+    
+    playingBoard.push_back(firstBoardSquare);
+    playingBoard.push_back(secondBoardSquare);
+    playingBoard.push_back(thirdBoardSquare);
+    playingBoard.push_back(fourthBoardSquare);
+
     rectangles.push_back(firstRectangle);
+    rectangles.push_back(secondRectangle);
+    rectangles.push_back(thirdRectangle);
+    rectangles.push_back(fourthRectangle);
+    
 
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);
     
@@ -462,7 +474,6 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
 
 void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE textSize)
 {
-    
     int x;
     int y;
     
@@ -493,12 +504,25 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
         button->draw();
     }
     
+    for (RectangleShape* boardSection : playingBoard)
+    {
+        boardSection->draw();
+        RECT rect = boardSection->getRect();
+        InvalidateRect(hwnd, &rect, FALSE);
+    }
+
     for (RectangleShape* rectangle : rectangles)
     {
         rectangle->draw();
         RECT rect = rectangle->getRect();
+        for (RectangleShape* boardSection : playingBoard)
+        {
+            if (boardSection->isIn(rectangle->getCenter()))
+            {
+                rectangle->setPositionByCenter(boardSection->getCenter());
+            }
+        }
         InvalidateRect(hwnd, &rect, FALSE);
-        //std::cout << "Rectangle Drawn\n";
     }
     InvalidateRect(hwnd, NULL, FALSE);
 }
@@ -512,7 +536,6 @@ void clearButtons()
 {
     if (buttons.size() != 0)
     {
-        Button* toDelete;
         for (Button* button : buttons)
         {
             delete button;
@@ -525,11 +548,22 @@ void clearSettingsButtons()
 {
     if (buttons.size() != 0)
     {
-        Button* toDelete;
         for (Button* button : settingsButtons)
         {
             delete button;
         }
         settingsButtons.clear();
+    }
+}
+
+void clearRectangles()
+{
+    if (rectangles.size() != 0)
+    {
+        for (RectangleShape* rectangle : rectangles)
+        {
+            delete rectangle;
+        }
+        rectangles.clear();
     }
 }
