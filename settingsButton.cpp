@@ -7,7 +7,7 @@ settingsButton::settingsButton(HDC sHdc, int sLeft, int sTop, int sRight, int sB
     Rect.top = sTop;
     Rect.right = sRight;
     Rect.bottom = sBottom;
-    fill = RGB(200, 200, 200);
+    fill = RGB(200,200, 200);
     filled = true;
     border = RGB(0, 0, 0);
     draggable = false;
@@ -43,15 +43,9 @@ void settingsButton::draw()
     }
 
     Rectangle(hdc, Rect.left, Rect.top, Rect.right, Rect.bottom);
-    
-
-    
-    Brush = CreateSolidBrush(RGB(255, 255, 255));
-    SelectObject(hdc,Brush);
 
     if ((gear == NULL))
     {
-
         int fontSize = ((Rect.bottom - Rect.top) * 0.5);
 
         buttonFont = CreateFont(
@@ -77,6 +71,7 @@ void settingsButton::draw()
     if (Brush)
     {
         DeleteObject(Brush);
+        Brush = nullptr;
     }
     DeleteObject(Pen);
 }

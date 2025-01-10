@@ -431,7 +431,7 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
 
     //Calculate the position to center the text
     x = (clientWidth - textSize.cx) / 2; // Center horizontally
-    y = (clientHeight - textSize.cy) / 2; // Center vertically
+    y = (clientHeight - textSize.cy) / 8; // Center vertically
 
     // Set the text color
     SetTextColor(hdc, RGB(0, 0, 0)); // Black color
@@ -442,15 +442,15 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
     // Draw the text in the middle of the window
     TextOut(hdc, x, y, gameText, wcslen(gameText));
 
-    RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,255,255),false,true,hdc);
-    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
-    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
-    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(255, 255, 255), false, true, hdc);
+    RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
+    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(200, 0, 0), true, true, hdc);
+    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(200, 0, 0), true, true, hdc);
+    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(205, 0, 0), true, true, hdc);
     
-    RectangleShape* firstBoardSquare = new RectangleShape(1000, 1000, 1100, 1100, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc,5);
-    RectangleShape* secondBoardSquare = new RectangleShape(1100, 1000, 1200, 1100, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
-    RectangleShape* thirdBoardSquare = new RectangleShape(1000, 1100, 1100, 1200, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
-    RectangleShape* fourthBoardSquare = new RectangleShape(1100, 1100, 1200, 1200, RGB(0, 0, 0), RGB(200, 0, 0), false, false, hdc, 5);
+    RectangleShape* firstBoardSquare = new RectangleShape(1000, 1000, 1100, 1100, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc,5);
+    RectangleShape* secondBoardSquare = new RectangleShape(1100, 1000, 1200, 1100, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
+    RectangleShape* thirdBoardSquare = new RectangleShape(1000, 1100, 1100, 1200, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
+    RectangleShape* fourthBoardSquare = new RectangleShape(1100, 1100, 1200, 1200, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
     
     playingBoard.push_back(firstBoardSquare);
     playingBoard.push_back(secondBoardSquare);
@@ -460,7 +460,7 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
     rectangles.push_back(firstRectangle);
     rectangles.push_back(secondRectangle);
     rectangles.push_back(thirdRectangle);
-    rectangles.push_back(fourthRectangle);
+    rectangles.push_back(fourthRectangle);    
     
 
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);
@@ -488,7 +488,7 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
 
     //Calculate the position to center the text
     x = (clientWidth - textSize.cx) / 2; // Center horizontally
-    y = (clientHeight - textSize.cy) / 2; // Center vertically
+    y = (clientHeight - textSize.cy) / 8; // Center vertically
 
     // Set the text color
     SetTextColor(hdc, RGB(0, 0, 0)); // Black color
@@ -499,10 +499,7 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
     // Draw the text in the middle of the window
     TextOut(hdc, x, y, gameText, wcslen(gameText));
  
-    for (Button* button : buttons)
-    {
-        button->draw();
-    }
+
     
     for (RectangleShape* boardSection : playingBoard)
     {
@@ -513,18 +510,24 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
 
     for (RectangleShape* rectangle : rectangles)
     {
-        rectangle->draw();
-        RECT rect = rectangle->getRect();
+        
         for (RectangleShape* boardSection : playingBoard)
         {
-            if (boardSection->isIn(rectangle->getCenter()))
+            if (boardSection->isIn(rectangle->getCenter()) && !leftButtonPressed)
             {
                 rectangle->setPositionByCenter(boardSection->getCenter());
             }
         }
+        rectangle->draw();
+        RECT rect = rectangle->getRect();
         InvalidateRect(hwnd, &rect, FALSE);
     }
     InvalidateRect(hwnd, NULL, FALSE);
+
+    for (Button* button : buttons)
+    {
+        button->draw();
+    }
 }
 
 void updateScreen()

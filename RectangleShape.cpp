@@ -151,8 +151,8 @@ int RectangleShape:: getIsDragging() const
 
 POINT RectangleShape::getCenter()
 	{
-		center.x = Rect.right - Rect.left;
-		center.y = Rect.bottom - Rect.top;
+		center.x = Rect.right - width/2;
+		center.y = Rect.bottom - height/2;
 		return center;
 	}
 
