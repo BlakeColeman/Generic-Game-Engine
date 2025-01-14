@@ -308,7 +308,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         {
                             clearButtons();
                         }
-
                         Button* playGameButton = new playButton(hdcMem, ((clientWidth / 2) - 200), ((clientHeight / 2) + 115), ((clientWidth / 2) + 200), ((clientHeight / 2) + 165), &curScreen);
                         Button* settingsWindowButton = new settingsButton(hdcMem, ((clientWidth / 2) + 5), ((clientHeight / 2) + 175), ((clientWidth / 2) + 200), ((clientHeight / 2) + 225),NULL, SubWindowProc,hwnd, clientWidth*0.75, clientHeight*0.75);
                         Button* closeGameButton = new closeButton(hdcMem, ((clientWidth / 2) - 200), ((clientHeight / 2) + 175), ((clientWidth / 2) - 5), ((clientHeight / 2) + 225));
@@ -410,7 +409,6 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-
     return 0;
 
     KillTimer(hwnd, TIMER_ID);
@@ -477,7 +475,6 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
     polygonPoints.push_back(polygonPoint4);
     polygonPoints.push_back(polygonPoint5);
 
-
     polygonShape* polygon =  new polygonShape(polygonPoints, RGB(0,0,0), RGB(0,0,255), true,true,hdc, 5);
 
     RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
@@ -491,9 +488,7 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
     rectangles.push_back(fourthRectangle); 
     rectangles.push_back(polygon);
     
-
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);
-    
     buttons.push_back(gearButton);
 
     levelRunning = true;

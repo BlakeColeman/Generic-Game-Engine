@@ -6,7 +6,6 @@ polygonShape::polygonShape(std::vector<POINT> sPoints, COLORREF sBorder, COLORRE
 	{
 		points.push_back(point);
 	}
-
 	Rect.left = 0;
 	Rect.top = 0;
 	Rect.right = 0;
