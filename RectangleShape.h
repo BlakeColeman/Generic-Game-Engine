@@ -30,7 +30,7 @@ public:
     void setBorderColor(COLORREF color);
     void setFillColor(COLORREF color);
     void setFilled(bool value);
-    void setPositionByCenter(POINT nCenter);
+    virtual void setPositionByCenter(POINT nCenter);
     void setIsDragging(bool value);
 
     // Getters
@@ -45,5 +45,5 @@ public:
 
     // Other methods
     bool isIn(POINT mouse);
-    void draw();
+    virtual void draw();
 };
