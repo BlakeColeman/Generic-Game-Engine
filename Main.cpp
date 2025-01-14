@@ -12,6 +12,7 @@
 #include "appWindow.h";
 #include "settingsWindow.h";
 #include "boardSquare.h";
+#include "polygonShape.h";
 
 #define TIMER_ID 1
 #define TIMER_INTERVAL 16
@@ -424,7 +425,7 @@ void invalidateButton(HWND hwnd, HWND hwndButton)
     UpdateWindow(hwnd);  // Force immediate repaint
 }
 
-void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE textSize)
+void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE textSize)
 {
     clearButtons();
     clearRectangles();
@@ -452,15 +453,32 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
 
     // Draw the text in the middle of the window
     TextOut(hdc, x, y, gameText, wcslen(gameText));
-    
-    for (int i = 0;i < 3; i++ )
+
+    for (int i = 0;i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            boardSquare* square = new boardSquare((clientWidth / 2) - 150 + (100 * j), (clientHeight / 2 - 150) + (100 * i), (clientWidth / 2) - 50 + (100 * j), (clientHeight/2 -50) + (100 * i), RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc);
-            playingBoard.push_back(square);  
+            boardSquare* square = new boardSquare((clientWidth / 2) - 150 + (100 * j), (clientHeight / 2 - 150) + (100 * i), (clientWidth / 2) - 50 + (100 * j), (clientHeight / 2 - 50) + (100 * i), RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc);
+            playingBoard.push_back(square);
         }
     }
+
+    POINT polygonPoint1 ={ 600,600 };
+    POINT polygonPoint2 ={ 700,600 };
+    POINT polygonPoint3 ={ 650,700 };
+    POINT polygonPoint4 ={ 550,700 };
+    POINT polygonPoint5 ={ 600,600 };
+
+    std::vector<POINT> polygonPoints;
+      
+    polygonPoints.push_back(polygonPoint1);
+    polygonPoints.push_back(polygonPoint2);
+    polygonPoints.push_back(polygonPoint3);
+    polygonPoints.push_back(polygonPoint4);
+    polygonPoints.push_back(polygonPoint5);
+
+
+    polygonShape* polygon =  new polygonShape(polygonPoints, RGB(0,0,0), RGB(0,0,255), true,true,hdc, 5);
 
     RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
     RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
@@ -470,7 +488,8 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
     rectangles.push_back(firstRectangle);
     rectangles.push_back(secondRectangle);
     rectangles.push_back(thirdRectangle);
-    rectangles.push_back(fourthRectangle);    
+    rectangles.push_back(fourthRectangle); 
+    rectangles.push_back(polygon);
     
 
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);
@@ -535,7 +554,7 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
 
     if (gettingDragged != NULL)
     {
-        gettingDragged->draw();
+        gettingDragged->draw();  
     }
         
     InvalidateRect(hwnd, NULL, FALSE);
