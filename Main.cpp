@@ -10,6 +10,8 @@
 #include "returnButton.h";
 #include "subReturnButton.h"
 #include "appWindow.h";
+#include "settingsWindow.h";
+#include "boardSquare.h";
 
 #define TIMER_ID 1
 #define TIMER_INTERVAL 16
@@ -23,11 +25,11 @@ HICON gearIcon = (HICON)LoadImage(NULL, L"Gear.ico", IMAGE_ICON, 32, 32, LR_LOAD
 std::vector<Button*> buttons;
 std::vector<Button*> settingsButtons;
 std::vector<RectangleShape*> rectangles;
-std::vector<RectangleShape*> playingBoard;
+std::vector<boardSquare*> playingBoard;
 
 RectangleShape* gettingDragged = NULL;
 
-bool leftButtonPressed = false;
+bool leftButtonPressed = false;  
 bool rightButtonPressed = false;
 
 bool levelRunning = false;
@@ -162,6 +164,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
     switch (uMsg)
     {            
+        case WM_KEYDOWN:
+        {
+            if (wParam == VK_ESCAPE)
+            {
+                settingsWindow(gearIcon, L"Settings", SubWindowProc, L"Settings", clientWidth/2, clientHeight/2, hwnd);
+            }
+            break;
+        }
+
         case WM_CREATE:
         {
             HDC hdc = GetDC(hwnd);
@@ -441,21 +452,20 @@ void createLevel(HDC hdc,HWND hwnd, int clientWidth, int clientHeight, SIZE text
 
     // Draw the text in the middle of the window
     TextOut(hdc, x, y, gameText, wcslen(gameText));
+    
+    for (int i = 0;i < 3; i++ )
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            boardSquare* square = new boardSquare((clientWidth / 2) - 150 + (100 * j), (clientHeight / 2 - 150) + (100 * i), (clientWidth / 2) - 50 + (100 * j), (clientHeight/2 -50) + (100 * i), RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc);
+            playingBoard.push_back(square);  
+        }
+    }
 
     RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
-    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(200, 0, 0), true, true, hdc);
-    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(200, 0, 0), true, true, hdc);
-    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(205, 0, 0), true, true, hdc);
-    
-    RectangleShape* firstBoardSquare = new RectangleShape(1000, 1000, 1100, 1100, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc,5);
-    RectangleShape* secondBoardSquare = new RectangleShape(1100, 1000, 1200, 1100, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
-    RectangleShape* thirdBoardSquare = new RectangleShape(1000, 1100, 1100, 1200, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
-    RectangleShape* fourthBoardSquare = new RectangleShape(1100, 1100, 1200, 1200, RGB(0, 0, 0), RGB(255, 255, 255), false, false, hdc, 5);
-    
-    playingBoard.push_back(firstBoardSquare);
-    playingBoard.push_back(secondBoardSquare);
-    playingBoard.push_back(thirdBoardSquare);
-    playingBoard.push_back(fourthBoardSquare);
+    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
 
     rectangles.push_back(firstRectangle);
     rectangles.push_back(secondRectangle);
@@ -498,30 +508,36 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
  
     // Draw the text in the middle of the window
     TextOut(hdc, x, y, gameText, wcslen(gameText));
- 
-
     
-    for (RectangleShape* boardSection : playingBoard)
+    for (boardSquare* boardSection : playingBoard)
     {
         boardSection->draw();
         RECT rect = boardSection->getRect();
+        bool isIn = false;
         InvalidateRect(hwnd, &rect, FALSE);
-    }
+        for (RectangleShape* rectangle : rectangles)
+        {
+            if (boardSection->isIn(rectangle->getCenter()) && !leftButtonPressed && !boardSection->getFull())
+            {
+                rectangle->setPositionByCenter(boardSection->getCenter());
+                isIn = true;
+            }
+            boardSection->setFull(isIn);
+        }
+    }       
 
     for (RectangleShape* rectangle : rectangles)
     {
-        
-        for (RectangleShape* boardSection : playingBoard)
-        {
-            if (boardSection->isIn(rectangle->getCenter()) && !leftButtonPressed)
-            {
-                rectangle->setPositionByCenter(boardSection->getCenter());
-            }
-        }
         rectangle->draw();
         RECT rect = rectangle->getRect();
         InvalidateRect(hwnd, &rect, FALSE);
     }
+
+    if (gettingDragged != NULL)
+    {
+        gettingDragged->draw();
+    }
+        
     InvalidateRect(hwnd, NULL, FALSE);
 
     for (Button* button : buttons)

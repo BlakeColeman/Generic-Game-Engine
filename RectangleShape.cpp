@@ -106,8 +106,12 @@ void RectangleShape:: draw()
 		if (filled)
 		{
 			Brush = CreateSolidBrush(fill);
-			SelectObject(hdc, Brush);
 		}
+		else
+		{
+			Brush = CreateSolidBrush(RGB(255, 255, 255));
+		}
+		SelectObject(hdc, Brush);
 
 		Rectangle(hdc, Rect.left, Rect.top, Rect.right, Rect.bottom);
 
