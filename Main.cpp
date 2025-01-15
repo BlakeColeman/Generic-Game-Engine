@@ -128,7 +128,6 @@ LRESULT CALLBACK SubWindowProc(HWND hwndSubscreen, UINT uMsg, WPARAM wParam, LPA
 
         case WM_LBUTTONDOWN:
         {
-
             leftButtonPressed = true; // Left mouse button down
             POINT pt;
             GetCursorPos(&pt);
@@ -142,7 +141,6 @@ LRESULT CALLBACK SubWindowProc(HWND hwndSubscreen, UINT uMsg, WPARAM wParam, LPA
                     return true;  // Mouse is inside this rectangle
                 }
             }
-
             return 0;
         }
     }
@@ -308,6 +306,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                         {
                             clearButtons();
                         }
+
                         Button* playGameButton = new playButton(hdcMem, ((clientWidth / 2) - 200), ((clientHeight / 2) + 115), ((clientWidth / 2) + 200), ((clientHeight / 2) + 165), &curScreen);
                         Button* settingsWindowButton = new settingsButton(hdcMem, ((clientWidth / 2) + 5), ((clientHeight / 2) + 175), ((clientWidth / 2) + 200), ((clientHeight / 2) + 225),NULL, SubWindowProc,hwnd, clientWidth*0.75, clientHeight*0.75);
                         Button* closeGameButton = new closeButton(hdcMem, ((clientWidth / 2) - 200), ((clientHeight / 2) + 175), ((clientWidth / 2) - 5), ((clientHeight / 2) + 225));
@@ -409,6 +408,7 @@ int main() {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
     return 0;
 
     KillTimer(hwnd, TIMER_ID);
@@ -461,19 +461,51 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
         }
     }
 
-    POINT polygonPoint1 ={ 600,600 };
-    POINT polygonPoint2 ={ 700,600 };
-    POINT polygonPoint3 ={ 650,700 };
-    POINT polygonPoint4 ={ 550,700 };
-    POINT polygonPoint5 ={ 600,600 };
+    POINT polygonPoint1 = { 600,610 };
+    POINT polygonPoint2 = { 600,600 };
+    POINT polygonPoint3 = { 610,600 };
+    POINT polygonPoint4 = { 650,650 };
+    POINT polygonPoint5 = { 650,650 };
+    POINT polygonPoint6 = { 690,600 };
+    POINT polygonPoint7 = { 700,600 };
+    POINT polygonPoint8 = { 700,610 };
+    POINT polygonPoint9 = { 650,650 };
+    POINT polygonPoint10 = { 655,655 };
+    POINT polygonPoint11 = { 700,690 };
+    POINT polygonPoint12 = { 700,700 };
+    POINT polygonPoint13 = { 690,700 };
+    POINT polygonPoint14 = { 650,650 };
+    POINT polygonPoint15 = { 650,650 };
+    POINT polygonPoint16 = { 610,700 };
+    POINT polygonPoint17 = { 600,700 };
+    POINT polygonPoint18 = { 600,690 };
+    POINT polygonPoint19 = { 650,650 };
+    POINT polygonPoint20 = { 650,650 };
+    POINT polygonPoint21 = { 600,610 };
 
-    std::vector<POINT> polygonPoints;
+    std::vector<POINT> polygonPoints;  
       
     polygonPoints.push_back(polygonPoint1);
     polygonPoints.push_back(polygonPoint2);
     polygonPoints.push_back(polygonPoint3);
     polygonPoints.push_back(polygonPoint4);
     polygonPoints.push_back(polygonPoint5);
+    polygonPoints.push_back(polygonPoint6);
+    polygonPoints.push_back(polygonPoint7);
+    polygonPoints.push_back(polygonPoint8);
+    polygonPoints.push_back(polygonPoint9);
+    polygonPoints.push_back(polygonPoint10);
+    polygonPoints.push_back(polygonPoint11);
+    polygonPoints.push_back(polygonPoint12);
+    polygonPoints.push_back(polygonPoint13);
+    polygonPoints.push_back(polygonPoint14);
+    polygonPoints.push_back(polygonPoint15);
+    polygonPoints.push_back(polygonPoint16);
+    polygonPoints.push_back(polygonPoint17);
+    polygonPoints.push_back(polygonPoint18);
+    polygonPoints.push_back(polygonPoint19);
+    polygonPoints.push_back(polygonPoint20);
+    polygonPoints.push_back(polygonPoint21);
 
     polygonShape* polygon =  new polygonShape(polygonPoints, RGB(0,0,0), RGB(0,0,255), true,true,hdc, 5);
 
@@ -488,7 +520,9 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
     rectangles.push_back(fourthRectangle); 
     rectangles.push_back(polygon);
     
+
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);
+    
     buttons.push_back(gearButton);
 
     levelRunning = true;
@@ -529,12 +563,18 @@ void updateLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
         RECT rect = boardSection->getRect();
         bool isIn = false;
         InvalidateRect(hwnd, &rect, FALSE);
+        POINT bCenter = boardSection->getCenter();
         for (RectangleShape* rectangle : rectangles)
         {
-            if (boardSection->isIn(rectangle->getCenter()) && !leftButtonPressed && !boardSection->getFull())
+            POINT rCenter = rectangle->getCenter();
+
+            if (boardSection->isIn(rCenter) && !leftButtonPressed && !boardSection->getFull())
             {
-                rectangle->setPositionByCenter(boardSection->getCenter());
-                isIn = true;
+                if (rCenter.x != bCenter.x && rCenter.y != bCenter.y)
+                {
+                    rectangle->setPositionByCenter(boardSection->getCenter());
+                    isIn = true;
+                }
             }
             boardSection->setFull(isIn);
         }
