@@ -66,6 +66,7 @@ void Button:: draw()
     SetBkMode(hdc, TRANSPARENT);
 
     HFONT tempFont = (HFONT)SelectObject(hdc, buttonFont);
+
     DrawText(hdc, buttonName, -1, &Rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
     SelectObject(hdc, tempFont);

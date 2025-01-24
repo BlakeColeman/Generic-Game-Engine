@@ -15,6 +15,7 @@ closeButton:: closeButton(HDC sHdc, int sLeft, int sTop, int sRight, int sBottom
     buttonName = L"Close Game";  
 
     draw();
+
 }
 
 void closeButton::doFunction()

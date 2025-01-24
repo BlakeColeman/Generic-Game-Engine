@@ -1,6 +1,6 @@
-#include "RectangleShape.h"
+#include "rectangleShape.h"
 
-RectangleShape::RectangleShape()
+rectangleShape::rectangleShape()
 {
 	Rect.left = 0;
 	Rect.top = 0;
@@ -18,7 +18,7 @@ RectangleShape::RectangleShape()
 	draw();
 }
 
-RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable,HDC sHdc)
+rectangleShape::rectangleShape(int sLeft, int sTop, int sRight, int sBottom, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable,HDC sHdc)
 	{
 		Rect.left = sLeft;
 		Rect.top = sTop;
@@ -37,7 +37,7 @@ RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COL
 		draw();
 	}
 
-RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable, HDC sHdc, int nBorderWidth)
+rectangleShape::rectangleShape(int sLeft, int sTop, int sRight, int sBottom, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable, HDC sHdc, int nBorderWidth)
 {
 	Rect.left = sLeft;
 	Rect.top = sTop;
@@ -56,7 +56,26 @@ RectangleShape::RectangleShape(int sLeft, int sTop, int sRight, int sBottom, COL
 	draw();
 }
 
-void RectangleShape:: setPosition(int newLeft, int newTop, int newRight, int newBottom)
+rectangleShape::rectangleShape(POINT sCenter, int sWidth, int sHeight)
+{
+	Rect.left = sCenter.x - sWidth / 2;
+	Rect.top = sCenter.y - sHeight / 2;
+	Rect.right = sCenter.x + sWidth / 2;
+	Rect.bottom = sCenter.y + sHeight / 2;
+	fill = RGB(255,255,255);
+	filled = true;
+	border = RGB(0,0,0);
+	draggable = false;
+	isDragging = false;
+	hdc = NULL;
+	width = sWidth;
+	height = sHeight;
+	borderWidth = 1;
+
+	draw();
+}
+
+void rectangleShape:: setPosition(int newLeft, int newTop, int newRight, int newBottom)
 	{
 		Rect.left = newLeft;
 		Rect.top = newTop;
@@ -65,26 +84,31 @@ void RectangleShape:: setPosition(int newLeft, int newTop, int newRight, int new
 		draw();
 	}
 
-void RectangleShape:: setBorderColor(COLORREF color)
+void rectangleShape:: setBorderColor(COLORREF color)
 	{
 		border = color;
 		draw();
 	}
 
-void RectangleShape:: setFillColor(COLORREF color)
+void rectangleShape:: setFillColor(COLORREF color)
 	{
 		fill = color;
 		draw();
 	}
 
-void RectangleShape:: setFilled(bool value)
+void rectangleShape:: setFilled(bool value)
 	{
 		filled = value;
 		draw();
 	}
 
-bool RectangleShape:: isIn(POINT check)
+void rectangleShape::setHDC(HDC sHdc)
 {
+	hdc = sHdc;
+}
+
+bool rectangleShape:: isIn(POINT check)
+{  
 	if ((check.x > Rect.left && check.x < Rect.right) && (check.y > Rect.top && check.y < Rect.bottom))
 	{
 		return true;
@@ -95,7 +119,7 @@ bool RectangleShape:: isIn(POINT check)
 	}
 }
 
-void RectangleShape:: draw()
+void rectangleShape:: draw()
 	{	
 		SetBkMode(hdc, TRANSPARENT);
 
@@ -123,44 +147,54 @@ void RectangleShape:: draw()
 		return;
 	}
 
-int RectangleShape:: getLeft() const
+int rectangleShape:: getLeft() const
 	{ 
 		return Rect.left;
 	}
 
-int RectangleShape:: getTop() const
+int rectangleShape:: getTop() const
 	{ 
 		return Rect.top;
 	}
 
-int RectangleShape:: getRight() const
+int rectangleShape:: getRight() const
 	{ 
 		return Rect.right;
 	}
 
-int RectangleShape:: getBottom() const
+int rectangleShape:: getBottom() const
 	{ 
 		return Rect.bottom;
 	}
 
-int RectangleShape:: getDraggable() const
+HDC rectangleShape:: getHdc() const
+{
+	return hdc;
+}
+
+int rectangleShape:: getDraggable() const
 	{
 		return draggable;
 	}
 
-int RectangleShape:: getIsDragging() const
+void rectangleShape::setDraggable(bool value)
+{
+	draggable = value;
+}
+
+int rectangleShape:: getIsDragging() const
 	{
 		return isDragging;
 	}
 
-POINT RectangleShape::getCenter()
+POINT rectangleShape::getCenter()
 	{
 		center.x = Rect.right - width/2;
 		center.y = Rect.bottom - height/2;
 		return center;
 	}
 
-void RectangleShape::setPositionByCenter(POINT nCenter)
+void rectangleShape::setPositionByCenter(POINT nCenter)
 {
 	int xOffset = width / 2;
 	int yOffset = height / 2;
@@ -168,12 +202,12 @@ void RectangleShape::setPositionByCenter(POINT nCenter)
 	setPosition(nCenter.x - xOffset,nCenter.y - yOffset, nCenter.x + xOffset, nCenter.y + yOffset);
 }
 
-void RectangleShape::setIsDragging(bool value)
+void rectangleShape::setIsDragging(bool value)
 {
 	isDragging = value;
 }
 
-RECT RectangleShape::getRect()
+RECT rectangleShape::getRect()
 {
 	return Rect;
 }

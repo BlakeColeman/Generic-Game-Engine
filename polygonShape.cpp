@@ -6,6 +6,7 @@ polygonShape::polygonShape(std::vector<POINT> sPoints, COLORREF sBorder, COLORRE
 	{
 		points.push_back(point);
 	}
+
 	Rect.left = 0;
 	Rect.top = 0;
 	Rect.right = 0;
@@ -26,23 +27,30 @@ polygonShape::polygonShape(std::vector<POINT> sPoints, COLORREF sBorder, COLORRE
 
 void polygonShape::setPositionByCenter(POINT nCenter)
 {
-	int xChange = center.x - nCenter.x;
-	int yChange = center.y - nCenter.y;
+	int xChange = nCenter.x - center.x;
+	int yChange = nCenter.y - center.y;
+
+	std::vector<POINT> tempPoints;
 
 	for (POINT point : points)
 	{
-		point.x = point.x + xChange;
-		point.y = point.y + xChange;
+		POINT newPoint;
+		newPoint.x = point.x + xChange;
+		newPoint.y = point.y + yChange;
+		tempPoints.push_back(newPoint);
 	}
+	points.clear();
+	for (POINT point : tempPoints)
+	{
+		points.push_back(point);
+	}
+	tempPoints.clear();
 
-	center.x = center.x + xChange;
-	center.y = center.y + yChange;
+	center.x = nCenter.x;
+	center.y = nCenter.y;
 
-	Rect.left = Rect.left + xChange;
-	Rect.right = Rect.right + xChange;
-	Rect.top = Rect.top + yChange;
-	Rect.bottom = Rect.bottom + yChange;
-
+	setRect();
+	draw();
 }
 
 void polygonShape:: setRect()
@@ -54,7 +62,7 @@ void polygonShape:: setRect()
 
 	for (POINT point : points)
 	{
-		if (point.x < xMin)
+		if (point.x < xMin)  
 		{
 			xMin = point.x;
 		}
@@ -67,7 +75,7 @@ void polygonShape:: setRect()
 		{
 			yMin = point.y;
 		}
-		else if (point.y > yMin)
+		else if (point.y > yMax)
 		{
 			yMax = point.y;
 		}
@@ -77,7 +85,6 @@ void polygonShape:: setRect()
 	Rect.right = xMax;
 	Rect.top = yMin;
 	Rect.bottom = yMax;
-
 	center.x = xMax - (width/2);
 	center.y = yMax - (height/2);
 }
@@ -89,6 +96,7 @@ std::vector<POINT> polygonShape:: getPoints()
 
 void polygonShape::draw()
 {
+
 	SetBkMode(hdc, TRANSPARENT);
 
 	HPEN Pen = CreatePen(PS_SOLID, borderWidth, border);

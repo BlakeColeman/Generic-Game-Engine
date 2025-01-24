@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <iostream>
 
-class RectangleShape
+class rectangleShape
 {
 protected:
     RECT Rect;
@@ -17,13 +17,14 @@ protected:
 
 public:
     // Constructors
-    RectangleShape(int sLeft, int sTop, int sRight, int sBottom,
+    rectangleShape(int sLeft, int sTop, int sRight, int sBottom,
         COLORREF sBorder, COLORREF sFill, bool sFilled,
         bool draggable, HDC hdc);
-    RectangleShape(int sLeft, int sTop, int sRight, int sBottom,
+    rectangleShape(int sLeft, int sTop, int sRight, int sBottom,
         COLORREF sBorder, COLORREF sFill, bool sFilled,
         bool draggable, HDC hdc, int borderWidth);
-    RectangleShape();
+    rectangleShape(POINT sCenter, int sWidth, int sHeight);
+    rectangleShape();
 
     // Setters
     void setPosition(int newLeft, int newTop, int newRight, int newBottom);
@@ -32,6 +33,8 @@ public:
     void setFilled(bool value);
     virtual void setPositionByCenter(POINT nCenter);
     void setIsDragging(bool value);
+    void setHDC(HDC sHdc);
+    void setDraggable(bool value);
 
     // Getters
     POINT getCenter();
@@ -41,6 +44,7 @@ public:
     int getBottom() const;
     int getDraggable() const;
     int getIsDragging() const;
+    HDC getHdc() const;
     RECT getRect();
 
     // Other methods

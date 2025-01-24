@@ -9,7 +9,9 @@ appWindow:: appWindow(HICON sWindowIcon, const wchar_t* sWindowName, WNDPROC sWi
     windowTitle = sWindowTitle;
     width = sWidth;
     height = sHeight;
+
     hwnd = NULL;
+
     wc.lpfnWndProc = windowProc;         // Window procedure function
     wc.hInstance = GetModuleHandle(nullptr); // Get the instance handle
     wc.lpszClassName = windowName;        // Window class name (wide string)
@@ -25,7 +27,9 @@ appWindow:: appWindow(HICON sWindowIcon, const wchar_t* sWindowName, WNDPROC sWi
         DWORD dwError = GetLastError();
         std::cerr << "Window class registration failed with error code " << dwError << std::endl;
     }
+
     create();
+
 }
 
 appWindow::appWindow()

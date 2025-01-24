@@ -2,7 +2,7 @@
 #include "rectangleShape.h"
 
 
-class boardSquare : public RectangleShape
+class boardSquare : public rectangleShape
 {
 private:
     bool full;

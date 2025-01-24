@@ -1,7 +1,7 @@
 #pragma once
-#include "RectangleShape.h"
+#include "rectangleShape.h"
 
-class Button : public RectangleShape
+class Button : public rectangleShape
 {
 private:
     
