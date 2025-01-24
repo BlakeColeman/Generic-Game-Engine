@@ -14,7 +14,6 @@ rectangleShape::rectangleShape()
 	center.x = Rect.right - Rect.left;
 	center.y = Rect.bottom - Rect.top;
 	borderWidth = 1;
-
 	draw();
 }
 
@@ -33,7 +32,6 @@ rectangleShape::rectangleShape(int sLeft, int sTop, int sRight, int sBottom, COL
 		width = Rect.right - Rect.left;
 		height = Rect.bottom - Rect.top;
 		borderWidth = 1;
-
 		draw();
 	}
 
@@ -52,7 +50,6 @@ rectangleShape::rectangleShape(int sLeft, int sTop, int sRight, int sBottom, COL
 	width = Rect.right - Rect.left;
 	height = Rect.bottom - Rect.top;
 	borderWidth = nBorderWidth;
-
 	draw();
 }
 
@@ -122,10 +119,8 @@ bool rectangleShape:: isIn(POINT check)
 void rectangleShape:: draw()
 	{	
 		SetBkMode(hdc, TRANSPARENT);
-
 		HPEN Pen = CreatePen(PS_SOLID, borderWidth, border);
 		SelectObject(hdc, Pen);
-
 		HBRUSH Brush = nullptr;
 		if (filled)
 		{
@@ -136,9 +131,7 @@ void rectangleShape:: draw()
 			Brush = CreateSolidBrush(RGB(255, 255, 255));
 		}
 		SelectObject(hdc, Brush);
-
 		Rectangle(hdc, Rect.left, Rect.top, Rect.right, Rect.bottom);
-
 		if (Brush)
 		{
 			DeleteObject(Brush);
