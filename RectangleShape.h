@@ -27,7 +27,7 @@ public:
     rectangleShape();
 
     // Setters
-    void setPosition(int newLeft, int newTop, int newRight, int newBottom);
+    virtual void setPosition(int newLeft, int newTop, int newRight, int newBottom);
     void setBorderColor(COLORREF color);
     void setFillColor(COLORREF color);
     void setFilled(bool value);
@@ -48,6 +48,6 @@ public:
     RECT getRect();
 
     // Other methods
-    bool isIn(POINT mouse);
+    virtual bool isIn(POINT mouse);
     virtual void draw();
 };

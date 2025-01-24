@@ -1,23 +1,13 @@
 #pragma once
 #include "rectangleShape.h";
-
 #include <vector>
 
 
-class compoundShape
+class compoundShape : public rectangleShape
 {
 protected:
 
-    RECT Rect;
-    COLORREF border;
-    COLORREF fill;
-    bool filled, isDragging, draggable;
-    HDC hdc;
-    POINT center;
-    int borderWidth;
-
     std::vector <rectangleShape> elements;
-
 
 public:
     // Constructors
@@ -28,12 +18,13 @@ public:
     compoundShape();
 
     // Setters
-    //void setPositionByElements(int newLeft, int newTop, int newRight, int newBottom);
     void setRect();
+    void setPosition(int newLeft, int newTop, int newRight, int newBottom) override;
+    void setPositionByCenter(POINT nCenter);
 
     // Getters
 
     // Other methods
-    bool isIn(POINT mouse);
-    void draw();
+    void draw() override;
+    bool isIn(POINT point) override;
 };

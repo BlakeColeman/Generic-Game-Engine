@@ -13,6 +13,7 @@
 #include "settingsWindow.h";
 #include "boardSquare.h";
 #include "polygonShape.h";
+#include "compoundShape.h";
 
 #define TIMER_ID 1
 #define TIMER_INTERVAL 16
@@ -509,16 +510,32 @@ void createLevel(HDC hdc, HWND hwnd, int clientWidth, int clientHeight, SIZE tex
 
     polygonShape* polygon =  new polygonShape(polygonPoints, RGB(0,0,0), RGB(0,0,255), true,true,hdc, 5);
 
-    RectangleShape* firstRectangle = new RectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
-    RectangleShape* secondRectangle = new RectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
-    RectangleShape* thirdRectangle = new RectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
-    RectangleShape* fourthRectangle = new RectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+    rectangleShape* firstRectangle = new rectangleShape(100,100,200,200,RGB(0,0,0),RGB(255,0,0),true,true,hdc);
+    rectangleShape* secondRectangle = new rectangleShape(200, 100, 300, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+    rectangleShape* thirdRectangle = new rectangleShape(300, 100, 400, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+    rectangleShape* fourthRectangle = new rectangleShape(400, 100, 500, 200, RGB(0, 0, 0), RGB(255, 0, 0), true, true, hdc);
+
+    std::vector<rectangleShape> compoundElements;
+       
+    POINT points = { 150, 350 };
+    rectangleShape firstElement(points, 100, 100);
+    points.x = points.x + 100;
+    rectangleShape secondElement (points,100,100);
+    points.x = points.x + 100;
+    rectangleShape thirdElement(points, 100, 100);
+
+    compoundElements.push_back(firstElement);
+    compoundElements.push_back(secondElement);
+    compoundElements.push_back(thirdElement);
+
+    compoundShape* compound = new compoundShape(compoundElements,RGB(0,0,0), RGB(0,255,0), true,false, hdc);
 
     rectangles.push_back(firstRectangle);
     rectangles.push_back(secondRectangle);
     rectangles.push_back(thirdRectangle);
     rectangles.push_back(fourthRectangle); 
     rectangles.push_back(polygon);
+    rectangles.push_back(compound);
     
 
     Button* gearButton = new settingsButton(hdc, clientWidth-60, 10, clientWidth -10, 60, gearIcon, SubWindowProc, hwnd, clientWidth * 0.75, clientHeight * 0.75);

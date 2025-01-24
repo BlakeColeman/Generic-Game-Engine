@@ -2,9 +2,7 @@
 #include "compoundShape.h";
 
 // Constructors
-compoundShape :: compoundShape(std::vector <rectangleShape> sElements,
-    COLORREF sBorder, COLORREF sFill, bool sFilled,
-    bool sDraggable, HDC sHdc)
+compoundShape :: compoundShape(std::vector <rectangleShape> sElements, COLORREF sBorder, COLORREF sFill, bool sFilled, bool sDraggable, HDC sHdc)
 {
     border = sBorder;
     fill = sFill;
@@ -16,27 +14,23 @@ compoundShape :: compoundShape(std::vector <rectangleShape> sElements,
     Rect.top = 0;
     Rect.right = 0;
     Rect.bottom = 0;
-    setRect();
 
     borderWidth = 2;
-
     border = sBorder;
-
-
-    for (rectangleShape element : elements)
+    for (rectangleShape element : sElements)
     {
         element.setBorderColor(sBorder);
         element.setFillColor(sFill);
         element.setFilled(sFilled);
-        element.setDraggable(draggable);
+        element.setDraggable(false);
         element.setHDC(hdc);
         element.setPositionByCenter(element.getCenter());
         element.draw();
+        elements.push_back(element);
     }
+    setRect();
 
 }
-
-//std::vector <rectangleShape> elements;
 
 bool compoundShape::isIn(POINT mouse)
 {
@@ -46,16 +40,12 @@ bool compoundShape::isIn(POINT mouse)
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
     }
+    return false;
 }
 
 void compoundShape:: setRect()
 {
-
     int minX = 0, maxX = 0, minY = 0, maxY = 0;
     POINT temp = elements.front().getCenter();
     maxX = temp.x;
@@ -105,8 +95,7 @@ void compoundShape:: draw()
 
     for (rectangleShape element : elements)
     {
-        RECT Rect = element.getRect();
-        Rectangle(element.getHdc(), Rect.left, Rect.top, Rect.right, Rect.bottom);
+        element.draw();
     }
 
     if (Brush)
@@ -117,6 +106,26 @@ void compoundShape:: draw()
     return;
 }
 
+void compoundShape:: setPosition(int newLeft, int newTop, int newRight, int newBottom)
+{
+    POINT nCenter;
+    nCenter.x = newRight - newLeft;
+    nCenter.y = newBottom - newTop;
+    setPositionByCenter(nCenter);
+}
 
+void compoundShape:: setPositionByCenter(POINT nCenter)
+{
+    int xChange, yChange;
+    xChange = nCenter.x - center.x;
+    yChange = nCenter.y - center.y;
 
-
+    for (rectangleShape element : elements)
+    {
+        POINT elementCenter;
+        elementCenter = element.getCenter();
+        elementCenter.x = elementCenter.x + xChange;
+        elementCenter.y = elementCenter.y + yChange;
+        element.setPositionByCenter(elementCenter);
+    }
+}
